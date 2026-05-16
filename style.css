@@ -61,12 +61,16 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    position: relative;
+    z-index: 1;
 }
 
 .socials {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
+    position: relative;
+    z-index: 1;
 }
 
 .socials a {
@@ -102,6 +106,23 @@ body {
     transform: scale(1.05) translateY(-5px);
 }
 
+/* ── Character model ── */
+.character {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    height: 92vh;
+    width: auto;
+    z-index: 0;
+    pointer-events: none;
+    user-select: none;
+    object-fit: contain;
+    object-position: bottom left;
+    /* Fade the right edge smoothly into the dark background */
+    mask-image: linear-gradient(to right, black 55%, transparent 92%);
+    -webkit-mask-image: linear-gradient(to right, black 55%, transparent 92%);
+}
+
 /* ── Tablet (2 columns) ── */
 @media (max-width: 1024px) {
     h1 {
@@ -120,10 +141,23 @@ body {
         width: 240px;
         height: 120px;
     }
+
+    .character {
+        height: 55vh;
+        mask-image: linear-gradient(to right, black 45%, transparent 88%);
+        -webkit-mask-image: linear-gradient(
+            to right,
+            black 45%,
+            transparent 88%
+        );
+    }
 }
 
 /* ── Mobile (1 column, full-width cards) ── */
 @media (max-width: 600px) {
+    .character {
+        display: none;
+    }
     body {
         padding: 24px 16px;
         min-height: 100dvh;
