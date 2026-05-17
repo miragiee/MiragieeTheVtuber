@@ -23,6 +23,82 @@ body {
     box-sizing: border-box;
 }
 
+@keyframes geoidSweep {
+    0% {
+        background-position:
+            100% center,
+            center;
+    }
+    45% {
+        background-position:
+            0% center,
+            center;
+    }
+    100% {
+        background-position:
+            0% center,
+            center;
+    }
+}
+
+@keyframes geoidPulse {
+    0%,
+    100% {
+        opacity: 0.07;
+    }
+    40% {
+        opacity: 0.17;
+    }
+    70% {
+        opacity: 0.09;
+    }
+}
+
+.bg-pattern {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+
+    background-image:
+        linear-gradient(
+            105deg,
+            transparent 28%,
+            rgba(0, 0, 0, 0.55) 48%,
+            rgba(0, 0, 0, 0.65) 50%,
+            rgba(0, 0, 0, 0.55) 52%,
+            transparent 72%
+        ),
+        url("images/geoid_pattern.svg");
+
+    background-size:
+        300% 100%,
+        cover;
+    background-position:
+        100% center,
+        center;
+    background-repeat: no-repeat, no-repeat;
+
+    filter: invert(1);
+    mix-blend-mode: screen;
+
+    animation:
+        geoidSweep 14s cubic-bezier(0.4, 0, 0.6, 1) 0.5s infinite,
+        geoidPulse 9s ease-in-out 0s infinite;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+    background-size: 200px 200px;
+    opacity: 0.03;
+    mix-blend-mode: soft-light;
+}
+
 main {
     position: relative;
     z-index: 1;
@@ -33,6 +109,7 @@ main {
     padding: 40px 20px;
     box-sizing: border-box;
     width: 100%;
+    max-width: 1600px;
 }
 
 .hero {
@@ -42,7 +119,6 @@ main {
     justify-content: center;
 }
 
-/* ── Apple entrance keyframe: slide up + blur dissolve ── */
 @keyframes fadeUpBlur {
     from {
         opacity: 0;
@@ -57,20 +133,17 @@ main {
 }
 
 h1 {
-    font-size: 92px;
+    font-size: clamp(64px, 8vw, 110px);
     font-weight: bold;
     margin-bottom: -30px;
 
-    /* Apple-style gradient text: bright white → muted silver */
     background: linear-gradient(180deg, #ffffff 0%, #ffffff 40%, #8e8e8e 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 
-    /* Entrance: plays once on load */
     animation: fadeUpBlur 1s cubic-bezier(0.16, 1, 0.3, 1) both;
 
-    /* Hover transitions */
     transition:
         transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
         filter 0.4s ease;
@@ -78,7 +151,6 @@ h1 {
 
 h1:hover {
     transform: scale(1.05) translateY(-6px);
-    /* drop-shadow works with gradient/transparent text; text-shadow does not */
     filter: brightness(1.15) drop-shadow(0 0 24px rgba(255, 255, 255, 0.3));
 }
 
@@ -87,7 +159,6 @@ p {
     line-height: 1.5;
     color: #707070;
 
-    /* Staggered 150 ms after h1 */
     animation: fadeUpBlur 1s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
 
     transition:
@@ -116,14 +187,12 @@ p:hover {
     justify-content: center;
     text-decoration: none;
 
-    /* ── Liquid glass base (dark) ── */
     background: rgba(12, 12, 12, 0.55);
     backdrop-filter: blur(22px) saturate(140%);
     -webkit-backdrop-filter: blur(22px) saturate(140%);
 
     color: var(--main-text-color);
 
-    /* Glass edge — subtle light rim on dark glass */
     border: 1px solid rgba(255, 255, 255, 0.09);
 
     padding: 10px;
@@ -131,23 +200,24 @@ p:hover {
     height: 150px;
     border-radius: 32px;
 
-    /* Outer depth + inner top-edge catch-light */
     box-shadow:
         0 4px 32px rgba(0, 0, 0, 0.6),
         0 1px 0 rgba(255, 255, 255, 0.06) inset,
         0 -1px 0 rgba(0, 0, 0, 0.5) inset;
+
+    letter-spacing: 0em;
 
     transition:
         background 0.4s ease,
         border-color 0.4s ease,
         box-shadow 0.4s ease,
         transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
-        font-size 0.3s ease,
+        letter-spacing 0.35s ease,
         font-weight 0.3s ease,
+        filter 0.35s ease,
         color 0.3s ease;
 }
 
-/* ── Specular highlight — top-left "glass catching light" ── */
 .socials a::before {
     content: "";
     position: absolute;
@@ -193,7 +263,8 @@ p:hover {
     border-color: rgba(255, 255, 255, 0.18);
     color: var(--main-text-color);
     font-weight: 900;
-    font-size: 1.4em;
+    letter-spacing: 0.02em;
+    filter: brightness(1.08);
 
     box-shadow:
         0 8px 48px rgba(0, 0, 0, 0.75),
@@ -212,7 +283,6 @@ p:hover {
     opacity: 0.6;
 }
 
-/* ── Character entrance: glides in from the left + fades ── */
 @keyframes characterEntrance {
     from {
         opacity: 0;
@@ -224,14 +294,13 @@ p:hover {
     }
 }
 
-/* ── Character idle: slow, weightless vertical float ── */
 @keyframes characterFloat {
     0%,
     100% {
         transform: translateY(0);
     }
     50% {
-        transform: translateY(-18px);
+        transform: translateY(-8px);
     }
 }
 
@@ -244,19 +313,18 @@ p:hover {
     z-index: 0;
     pointer-events: none;
     user-select: none;
-    mask-image: linear-gradient(to right, black 55%, transparent 92%);
-    -webkit-mask-image: linear-gradient(to right, black 55%, transparent 92%);
+    mask-image:
+        linear-gradient(to bottom, black 62%, transparent 100%),
+        linear-gradient(to right, black 55%, transparent 92%);
+    mask-composite: intersect;
 
-    /* GPU hint for the continuous float */
+    -webkit-mask-image:
+        linear-gradient(to bottom, black 62%, transparent 100%),
+        linear-gradient(to right, black 55%, transparent 92%);
+    -webkit-mask-composite: source-in;
+
     will-change: transform;
 
-    /*
-      Chain:
-        1. characterEntrance — 0.3 s delay, 1.4 s duration  → done at 1.7 s
-        2. characterFloat    — starts at exactly 1.7 s, loops forever
-      The float begins at translateY(0), matching the entrance end-state,
-      so the hand-off is perfectly seamless.
-    */
     animation:
         characterEntrance 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both,
         characterFloat 6s ease-in-out 1.7s infinite;
@@ -282,12 +350,14 @@ p:hover {
 
     .character {
         height: 55vh;
-        mask-image: linear-gradient(to right, black 40%, transparent 85%);
-        -webkit-mask-image: linear-gradient(
-            to right,
-            black 40%,
-            transparent 85%
-        );
+        mask-image:
+            linear-gradient(to bottom, black 62%, transparent 100%),
+            linear-gradient(to right, black 40%, transparent 85%);
+        mask-composite: intersect;
+        -webkit-mask-image:
+            linear-gradient(to bottom, black 62%, transparent 100%),
+            linear-gradient(to right, black 40%, transparent 85%);
+        -webkit-mask-composite: source-in;
     }
 }
 
@@ -330,9 +400,7 @@ p:hover {
         box-sizing: border-box;
     }
 
-    /* Keep glass on mobile but tone down motion */
     .socials a:hover {
-        font-size: 1.2em;
         transform: scale(1.02) translateY(-2px);
     }
 
