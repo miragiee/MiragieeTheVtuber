@@ -42,34 +42,64 @@ main {
     justify-content: center;
 }
 
+/* ── Apple entrance keyframe: slide up + blur dissolve ── */
+@keyframes fadeUpBlur {
+    from {
+        opacity: 0;
+        transform: translateY(28px);
+        filter: blur(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
 h1 {
     font-size: 92px;
     font-weight: bold;
     margin-bottom: -30px;
-    text-shadow: 0 0 0px rgba(0, 0, 0, 0.3);
+
+    /* Apple-style gradient text: bright white → muted silver */
+    background: linear-gradient(180deg, #ffffff 0%, #ffffff 40%, #8e8e8e 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+
+    /* Entrance: plays once on load */
+    animation: fadeUpBlur 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+    /* Hover transitions */
     transition:
-        transform 0.3s ease-in-out,
-        box-shadow 0.3s ease-in-out;
+        transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+        filter 0.4s ease;
 }
 
 h1:hover {
-    transform: scale(1.05) translateY(-5px);
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    transform: scale(1.05) translateY(-6px);
+    /* drop-shadow works with gradient/transparent text; text-shadow does not */
+    filter: brightness(1.15) drop-shadow(0 0 24px rgba(255, 255, 255, 0.3));
 }
 
 p {
     font-size: 32px;
     line-height: 1.5;
     color: #707070;
+
+    /* Staggered 150 ms after h1 */
+    animation: fadeUpBlur 1s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+
     transition:
-        transform 0.3s ease-in-out,
-        color 0.3s ease-in-out;
+        transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+        color 0.35s ease,
+        text-shadow 0.35s ease;
 }
 
 p:hover {
-    transform: scale(1.05);
+    transform: scale(1.04) translateY(-3px);
     color: var(--main-text-color);
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    text-shadow: 0 0 14px rgba(255, 255, 255, 0.3);
 }
 
 .socials {
@@ -79,34 +109,130 @@ p:hover {
 }
 
 .socials a {
+    position: relative;
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
     text-decoration: none;
-    background-color: #15151580;
+
+    /* ── Liquid glass base (dark) ── */
+    background: rgba(12, 12, 12, 0.55);
+    backdrop-filter: blur(22px) saturate(140%);
+    -webkit-backdrop-filter: blur(22px) saturate(140%);
+
     color: var(--main-text-color);
-    border: 1px solid var(--border-color);
+
+    /* Glass edge — subtle light rim on dark glass */
+    border: 1px solid rgba(255, 255, 255, 0.09);
+
     padding: 10px;
     width: 300px;
     height: 150px;
     border-radius: 32px;
-    font-weight: regular;
+
+    /* Outer depth + inner top-edge catch-light */
+    box-shadow:
+        0 4px 32px rgba(0, 0, 0, 0.6),
+        0 1px 0 rgba(255, 255, 255, 0.06) inset,
+        0 -1px 0 rgba(0, 0, 0, 0.5) inset;
+
     transition:
-        background-color 0.3s,
-        transform 0.3s,
-        box-shadow 0.3s,
-        font-size 0.3s,
-        font-weight 0.3s,
-        color 0.3s;
+        background 0.4s ease,
+        border-color 0.4s ease,
+        box-shadow 0.4s ease,
+        transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+        font-size 0.3s ease,
+        font-weight 0.3s ease,
+        color 0.3s ease;
+}
+
+/* ── Specular highlight — top-left "glass catching light" ── */
+.socials a::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.03) 30%,
+        transparent 55%
+    );
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    z-index: 0;
+}
+
+.socials a::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -65%;
+    width: 45%;
+    height: 200%;
+    background: linear-gradient(
+        105deg,
+        transparent 35%,
+        rgba(255, 255, 255, 0.18) 50%,
+        transparent 65%
+    );
+    transform: skewX(-12deg);
+    pointer-events: none;
+    transition: left 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 0;
+}
+
+.socials a > * {
+    position: relative;
+    z-index: 1;
 }
 
 .socials a:hover {
-    background-color: var(--main-text-color);
-    color: var(--primary-color);
+    background: rgba(28, 28, 28, 0.7);
+    border-color: rgba(255, 255, 255, 0.18);
+    color: var(--main-text-color);
     font-weight: 900;
-    font-size: 1.5em;
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
-    transform: scale(1.05) translateY(-5px);
+    font-size: 1.4em;
+
+    box-shadow:
+        0 8px 48px rgba(0, 0, 0, 0.75),
+        0 0 24px rgba(255, 255, 255, 0.04),
+        0 1px 0 rgba(255, 255, 255, 0.12) inset,
+        0 -1px 0 rgba(0, 0, 0, 0.6) inset;
+
+    transform: scale(1.05) translateY(-6px);
+}
+
+.socials a:hover::after {
+    left: 120%;
+}
+
+.socials a:hover::before {
+    opacity: 0.6;
+}
+
+/* ── Character entrance: glides in from the left + fades ── */
+@keyframes characterEntrance {
+    from {
+        opacity: 0;
+        transform: translateX(-52px) translateY(24px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) translateY(0);
+    }
+}
+
+/* ── Character idle: slow, weightless vertical float ── */
+@keyframes characterFloat {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-18px);
+    }
 }
 
 .character {
@@ -120,6 +246,20 @@ p:hover {
     user-select: none;
     mask-image: linear-gradient(to right, black 55%, transparent 92%);
     -webkit-mask-image: linear-gradient(to right, black 55%, transparent 92%);
+
+    /* GPU hint for the continuous float */
+    will-change: transform;
+
+    /*
+      Chain:
+        1. characterEntrance — 0.3 s delay, 1.4 s duration  → done at 1.7 s
+        2. characterFloat    — starts at exactly 1.7 s, loops forever
+      The float begins at translateY(0), matching the entrance end-state,
+      so the hand-off is perfectly seamless.
+    */
+    animation:
+        characterEntrance 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both,
+        characterFloat 6s ease-in-out 1.7s infinite;
 }
 
 @media (max-width: 1024px) {
@@ -190,12 +330,21 @@ p:hover {
         box-sizing: border-box;
     }
 
+    /* Keep glass on mobile but tone down motion */
     .socials a:hover {
-        font-size: 1.25em;
-        transform: scale(1.02) translateY(-3px);
+        font-size: 1.2em;
+        transform: scale(1.02) translateY(-2px);
     }
 
-    h1:hover,
+    .socials a:hover::after {
+        left: 120%;
+    }
+
+    h1:hover {
+        transform: none;
+        filter: none;
+    }
+
     p:hover {
         transform: none;
     }
